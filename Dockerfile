@@ -1,11 +1,13 @@
-# syntax=docker/dockerfile:1
-FROM python:3.7-alpine
+FROM python:3.11-bullseye
 WORKDIR /code
-ENV FLASK_APP=app.py
-ENV FLASK_RUN_HOST=0.0.0.0
-RUN apk add --no-cache gcc musl-dev linux-headers
+RUN apt-get clean && \
+    apt-get update && \
+    apt-get install -y \
+    gcc \
+    musl-dev && \
+    rm -rf /var/lib/apt/lists/*
+COPY . .
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
-EXPOSE 5000
-COPY . .
-CMD ["flask", "run"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0"]
+

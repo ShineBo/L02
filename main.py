@@ -1,9 +1,9 @@
 import time
 
 import redis
-from flask import Flask
+from fastapi import FastAPI
 
-app = Flask(__name__)
+app = FastAPI()
 cache = redis.Redis(host='redis', port=6379)
 
 def get_hit_count():
@@ -17,7 +17,8 @@ def get_hit_count():
             retries -= 1
             time.sleep(0.5)
 
-@app.route('/')
-def hello():
+@app.get("/")
+async def hello():
     count = get_hit_count()
     return 'Hello World! I have been seen {} times.\n'.format(count)
+
